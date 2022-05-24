@@ -1,6 +1,15 @@
 let container = document.getElementById("gameContainer");
 let squareArray = [];
-let nextMove = "X";
+let player1 = {
+    name: "",
+    char: ""
+};
+let player2 = {
+    name: "",
+    char: ""
+};
+let currentPlayer;
+
 function gameOver (message){
     document.getElementById("Winner").innerHTML = message;
     container.style.display = "none";
@@ -40,47 +49,70 @@ for (let i = 0; i < lines.length; i++){
 }
 
 class ClassSquare {
-constructor (element, index){
-    this.element = element;
-    this.index = index;
-    this.state = "";
-}
-clicked(){
-this.state = nextMove;
-this.element.classList.remove("notClicked");
-this.element.onclick = function () {
-return false;
-};
-this.element.querySelector("p").innerHTML = this.state;
-if (wonGame()) return gameOver("PLAY AGAIN, The Winner is Player, " + this.state);
-if (isDraw()) return gameOver ("PLAY AGAIN, It is A Draw");
-nextMove == "X" ? (nextMove = "O") : (nextMove = "X");
-}
+    constructor (element, index){
+        this.element = element;
+        this.index = index;
+        this.state = "";
+    }
+    clicked(){
+        this.state = currentPlayer.char;
+        this.element.classList.remove("notClicked");
+        this.element.onclick = function () {
+            return false;
+        };
+        this.element.querySelector("p").innerHTML = this.state;
+        if (wonGame()) {
+            return gameOver("PLAY AGAIN, The Winner is " + currentPlayer.name);
+        }
+        if (isDraw()) {
+            return gameOver ("PLAY AGAIN, It is A Draw");
+        }
+        if (currentPlayer === player1) {
+            // in this if block, the currentPlayer is player1
+            currentPlayer = player2
+        } else {
+            // in this else block, the currentPlayer is player2
+            currentPlayer = player1
+        }
+    }
 }
 
 for (let index = 0; index < 9; index++){
-let div = document.createElement("div");
-div.classList.add ("square", "notClicked");
-let square = new ClassSquare (div, index);
-div.onclick = function(){
-square.clicked();
-}
-div.appendChild(document.createElement("p"));
-container.appendChild(div);
-squareArray.push(square);
+    let div = document.createElement("div");
+    div.classList.add ("square", "notClicked");
+    let square = new ClassSquare (div, index);
+    div.onclick = function(){
+        square.clicked();
+    }
+    div.appendChild(document.createElement("p"));
+    container.appendChild(div);
+    squareArray.push(square);
 }
 
 const wrapper = document.querySelector(".wrapper"),
 form = wrapper.querySelectorAll(".form"),
 submitInput = form[0].querySelector('input[type="submit"]');
 
-function getDataForm(e){
-e.preventDefault ();
-
-let formData = new FormData (form[0]);
-alert (formData.get('userField')  + '-' + formData.get('userField2') );
+function setPlayers(e){
+    e.preventDefault ();
+    let formData = new FormData (form[0]);
+    player1.name = formData.get('userField')
+    player2.name = formData.get('userField2')
+    const randomNumber = Math.floor(Math.random() * 2); // 0 - 1
+    if(randomNumber === 1 ) {
+        player1.char = "X";
+        player2.char = "O";
+        currentPlayer = player1 
+    } else {
+        player1.char = "O";
+        player2.char = "X";
+        currentPlayer = player2
+    }
+    alert ( player1.name +' ' +"goes first"); // change this alert so that it alerts a message saying "[PLAYERNAME] goes first"
 }
 
 document.addEventListener('DOMContentLoaded', function(){
-submitInput.addEventListener('click',getDataForm, false);
+    submitInput.addEventListener('click', setPlayers, false);
 }, false);
+
+//alert ( player1.name + '-' + player2.name );
