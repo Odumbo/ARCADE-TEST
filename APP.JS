@@ -108,7 +108,7 @@ function setPlayers(e){
         player2.char = "X";
         currentPlayer = player2
     }
-    alert ( player1.name +' ' +"goes first"); // change this alert so that it alerts a message saying "[PLAYERNAME] goes first"
+    alert ( currentPlayer.name +' ' +"goes first"); // change this alert so that it alerts a message saying "[PLAYERNAME] goes first"
 }
 
 document.addEventListener('DOMContentLoaded', function(){
